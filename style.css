@@ -1,10 +1,12 @@
 :root {
-    --bg-dark: #121212; /* Dark background */
-    --surface-dark: #1e1e1e; /* Slightly lighter surface for elements */
-    --text-light: #e0e0e0; /* Light text for readability */
-    --epic-red: #e53f3f; /* Epic brand red */
-    --epic-dark-red: #c73636; /* Slightly darker red for button hover */
-    --epic-red-accent: #ff6e6e; /* Lighter red for accents */
+    --bg-dark: #121212;
+    --surface-dark: #1e1e1e;
+    --text-light: #e0e0e0;
+    --epic-red: #e53f3f;
+    --epic-dark-red: #c73636;
+    --epic-red-accent: #ff6e6e;
+    --success-green: #4CAF50;
+    --success-green-dark: #45a049;
 }
 
 body {
@@ -23,7 +25,7 @@ body {
     background-color: var(--surface-dark);
     padding: 40px;
     border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Darker shadow for dark mode */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     max-width: 450px;
     width: 90%;
 }
@@ -34,29 +36,36 @@ h1 {
     font-weight: 700;
 }
 
-#generate-btn {
+#generate-btn, #copy-btn {
     padding: 12px 24px;
     font-size: 18px;
     font-weight: 700;
     cursor: pointer;
     border: none;
     border-radius: 8px;
-    background-color: var(--epic-red);
     color: white;
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
+#generate-btn {
+    background-color: var(--epic-red);
+}
+
 #generate-btn:hover {
-    background-color: var(--epic-red-accent); /* Brighter red on hover */
+    background-color: var(--epic-red-accent);
     transform: translateY(-2px);
 }
 
 #code-container {
     margin-top: 30px;
     padding: 20px;
-    background-color: #2b2b2b; /* Slightly different dark surface */
+    background-color: #2b2b2b;
     border-radius: 10px;
-    border: 1px solid #444; /* Darker border */
+    border: 1px solid #444;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #code-container p {
@@ -68,7 +77,25 @@ h1 {
 #code-output {
     font-size: 36px;
     font-weight: bold;
-    color: var(--epic-red-accent); /* Brighter red for visibility */
+    color: var(--epic-red-accent);
     min-height: 40px;
     user-select: all;
+    margin-bottom: 15px;
+}
+
+#copy-btn {
+    background-color: #555;
+}
+
+#copy-btn:hover {
+    background-color: #777;
+    transform: scale(1.05); /* Slight grow effect */
+}
+
+#copy-btn.copied {
+    background-color: var(--success-green);
+}
+
+#copy-btn.copied:hover {
+    background-color: var(--success-green-dark);
 }
