@@ -1,2 +1,2 @@
 # kiddinclass.github.io
-i really dont know read everything added to sites repective github page
+currently only one thing so i  made it the whole website. here the info about that.
