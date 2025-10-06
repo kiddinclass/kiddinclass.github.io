@@ -1,4 +1,6 @@
-// Function to generate the random Epic class code
+/**
+ * Generates a new Epic class code with three uppercase letters and four numbers.
+ */
 function generateEpicClassCode() {
     let letters = '';
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -14,13 +16,12 @@ function generateEpicClassCode() {
     return letters + numbers;
 }
 
-// Get the button and output elements from the HTML
+// Get the button and output elements from the HTML document
 const generateBtn = document.getElementById('generate-btn');
 const codeOutput = document.getElementById('code-output');
 
-// Add an event listener to the button
+// Add an event listener to the button to generate and display a new code
 generateBtn.addEventListener('click', () => {
-    // Generate a new code and display it on the page
     const newCode = generateEpicClassCode();
     codeOutput.textContent = newCode;
 });
