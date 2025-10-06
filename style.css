@@ -36,7 +36,8 @@ h1 {
     font-weight: 700;
 }
 
-#generate-btn, #copy-btn {
+/* Base style for all buttons */
+.main-button {
     padding: 12px 24px;
     font-size: 18px;
     font-weight: 700;
@@ -47,6 +48,7 @@ h1 {
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
+/* Separate styles for each button's background and hover effect */
 #generate-btn {
     background-color: var(--epic-red);
 }
@@ -54,6 +56,24 @@ h1 {
 #generate-btn:hover {
     background-color: var(--epic-red-accent);
     transform: translateY(-2px);
+}
+
+#copy-btn {
+    background-color: #555; /* Default color for the copy button */
+}
+
+#copy-btn:hover {
+    background-color: #777; /* Hover color for the copy button */
+    transform: translateY(-2px);
+}
+
+#copy-btn.copied {
+    background-color: var(--success-green);
+    transform: translateY(0);
+}
+
+#copy-btn.copied:hover {
+    background-color: var(--success-green-dark);
 }
 
 #code-container {
@@ -81,21 +101,4 @@ h1 {
     min-height: 40px;
     user-select: all;
     margin-bottom: 15px;
-}
-
-#copy-btn {
-    background-color: #555;
-}
-
-#copy-btn:hover {
-    background-color: #777;
-    transform: scale(1.05); /* Slight grow effect */
-}
-
-#copy-btn.copied {
-    background-color: var(--success-green);
-}
-
-#copy-btn.copied:hover {
-    background-color: var(--success-green-dark);
 }
