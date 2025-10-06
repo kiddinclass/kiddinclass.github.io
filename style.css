@@ -65,5 +65,5 @@ h1 {
     font-weight: bold;
     color: var(--epic-red);
     min-height: 40px;
-    user-select: all; /* Allows users to easily select and copy the code */
+    user-select: all;
 }
