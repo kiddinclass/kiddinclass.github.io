@@ -21,6 +21,10 @@ const generateBtn = document.getElementById('generate-btn');
 const copyBtn = document.getElementById('copy-btn');
 const codeOutput = document.getElementById('code-output');
 
+// Add the main-button class to both buttons
+generateBtn.classList.add('main-button');
+copyBtn.classList.add('main-button');
+
 // Add an event listener to the generate button
 generateBtn.addEventListener('click', () => {
     const newCode = generateEpicClassCode();
