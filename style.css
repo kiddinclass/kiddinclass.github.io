@@ -48,7 +48,7 @@ h1 {
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-/* Separate styles for each button's background and hover effect */
+/* Specific button styles */
 #generate-btn {
     background-color: var(--epic-red);
 }
@@ -59,11 +59,11 @@ h1 {
 }
 
 #copy-btn {
-    background-color: #555; /* Default color for the copy button */
+    background-color: var(--epic-red); /* Match generate button color */
 }
 
 #copy-btn:hover {
-    background-color: #777; /* Hover color for the copy button */
+    background-color: var(--epic-red-accent);
     transform: translateY(-2px);
 }
 
