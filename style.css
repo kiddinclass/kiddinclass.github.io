@@ -1,5 +1,10 @@
+:root {
+    --epic-red: #e53f3f;
+    --epic-dark-red: #c73636;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Quicksand', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,34 +17,53 @@ body {
     text-align: center;
     background-color: #ffffff;
     padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    max-width: 450px;
+    width: 90%;
 }
 
 h1 {
     color: #333;
     margin-bottom: 20px;
+    font-weight: 700;
 }
 
 #generate-btn {
     padding: 12px 24px;
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: 700;
     cursor: pointer;
     border: none;
-    border-radius: 5px;
-    background-color: #e53f3f; /* Epic's brand color */
+    border-radius: 8px;
+    background-color: var(--epic-red);
     color: white;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 #generate-btn:hover {
-    background-color: #c73636;
+    background-color: var(--epic-dark-red);
+    transform: translateY(-2px);
+}
+
+#code-container {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+#code-container p {
+    font-size: 18px;
+    color: #555;
+    margin: 0 0 10px 0;
 }
 
 #code-output {
-    margin-top: 30px;
     font-size: 36px;
     font-weight: bold;
-    color: #e53f3f;
+    color: var(--epic-red);
     min-height: 40px;
+    user-select: all; /* Allows users to easily select and copy the code */
 }
