@@ -52,6 +52,28 @@
             gap: 8px;
         }
 
+        .tab-cloak {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cloak-btn {
+            padding: 8px 16px;
+            background: #2a2a2a;
+            border: none;
+            border-radius: 6px;
+            color: #4ade80;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .cloak-btn:hover {
+            background: #333;
+        }
+
         .search-bar {
             flex: 1;
             max-width: 500px;
@@ -281,6 +303,11 @@
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Search games...">
             </div>
+            <div class="tab-cloak">
+                <button class="cloak-btn" onclick="cloakTab('ixl')">IXL</button>
+                <button class="cloak-btn" onclick="cloakTab('gimkit')">Gimkit</button>
+                <button class="cloak-btn" onclick="cloakTab('reset')">Reset</button>
+            </div>
         </div>
     </header>
 
@@ -307,6 +334,29 @@
     </footer>
 
     <script>
+        // Tab cloaking function
+        const originalTitle = document.title;
+        const originalIcon = document.querySelector("link[rel*='icon']") || document.createElement('link');
+        
+        function cloakTab(mode) {
+            const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+            link.type = 'image/x-icon';
+            link.rel = 'shortcut icon';
+            
+            if (mode === 'ixl') {
+                document.title = 'IXL | Dashboard';
+                link.href = 'https://www.ixl.com/favicon.ico';
+            } else if (mode === 'gimkit') {
+                document.title = 'Gimkit - Live Learning Game Show';
+                link.href = 'https://www.gimkit.com/favicon.ico';
+            } else if (mode === 'reset') {
+                document.title = originalTitle;
+                link.href = '';
+            }
+            
+            document.head.appendChild(link);
+        }
+
         const games = [
             {
                 title: "Eaglercraft WOW",
@@ -350,7 +400,7 @@
             },
             {
                 title: "FNAF Sister Location",
-                url: "/fnaf/sl/",
+                url: "/fnafmath/sl/",
                 description: "Explore the underground facility",
                 emoji: "⚡",
                 category: "action",
@@ -374,7 +424,7 @@
             },
             {
                 title: "FNAF World",
-                url: "/fnafmath/w",
+                url: "/fnafmath/w/",
                 description: "Adventure through a colorful RPG world",
                 emoji: "🌟",
                 category: "adventure",
@@ -382,7 +432,7 @@
             },
             {
                 title: "ULTRAKILL",
-                url: "/ultrakillmath",
+                url: "/ultrakill",
                 description: "Fast-paced retro FPS with intense combat",
                 emoji: "💀",
                 category: "action",
