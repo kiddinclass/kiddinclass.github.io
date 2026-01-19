@@ -74,6 +74,75 @@
             background: #333;
         }
 
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .music-btn {
+            padding: 8px 16px;
+            background: #2a2a2a;
+            border: 2px solid #4ade80;
+            border-radius: 6px;
+            color: #4ade80;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .music-btn:hover {
+            background: #333;
+        }
+
+        .music-btn.playing {
+            background: #4ade80;
+            color: #000;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            -webkit-appearance: none;
+            background: #2a2a2a;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #4ade80;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            background: #4ade80;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .now-playing {
+            font-size: 12px;
+            color: #888;
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .search-bar {
             flex: 1;
             max-width: 500px;
@@ -303,6 +372,14 @@
             <div class="search-bar">
                 <input type="text" id="searchInput" placeholder="Search games...">
             </div>
+            <div class="music-controls">
+                <button class="music-btn" id="musicToggle" onclick="toggleMusic()">🎵 Music</button>
+                <div class="volume-control">
+                    <span style="font-size: 12px; color: #888;">🔊</span>
+                    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="50">
+                </div>
+                <div class="now-playing" id="nowPlaying">No music playing</div>
+            </div>
             <div class="tab-cloak">
                 <button class="cloak-btn" onclick="cloakTab('ixl')">IXL</button>
                 <button class="cloak-btn" onclick="cloakTab('gimkit')">Gimkit</button>
@@ -334,6 +411,110 @@
     </footer>
 
     <script>
+        // Music Player
+        let audioPlayer = new Audio();
+        let playlist = [];
+        let currentTrack = 0;
+        let isPlaying = false;
+        let isFading = false;
+
+        // Load playlist from folder
+        const playlistFiles = [
+            'playlist/song1.mp3',
+            'playlist/song2.mp3',
+            'playlist/song3.mp3',
+            'playlist/song4.mp3',
+            'playlist/song5.mp3'
+            // Add more songs here as needed
+        ];
+
+        playlist = playlistFiles;
+
+        // Set initial volume
+        audioPlayer.volume = 0.5;
+
+        // Volume control
+        document.getElementById('volumeSlider').addEventListener('input', function(e) {
+            audioPlayer.volume = e.target.value / 100;
+        });
+
+        function toggleMusic() {
+            const btn = document.getElementById('musicToggle');
+            
+            if (!isPlaying) {
+                playMusic();
+                btn.classList.add('playing');
+                btn.textContent = '⏸ Pause';
+            } else {
+                pauseMusic();
+                btn.classList.remove('playing');
+                btn.textContent = '🎵 Music';
+            }
+        }
+
+        function playMusic() {
+            if (playlist.length === 0) return;
+            
+            audioPlayer.src = playlist[currentTrack];
+            audioPlayer.play();
+            isPlaying = true;
+            updateNowPlaying();
+        }
+
+        function pauseMusic() {
+            audioPlayer.pause();
+            isPlaying = false;
+        }
+
+        function nextTrack() {
+            currentTrack = (currentTrack + 1) % playlist.length;
+            if (isPlaying) {
+                fadeToNextTrack();
+            }
+        }
+
+        function fadeToNextTrack() {
+            if (isFading) return;
+            isFading = true;
+
+            const originalVolume = audioPlayer.volume;
+            const fadeOutInterval = setInterval(() => {
+                if (audioPlayer.volume > 0.1) {
+                    audioPlayer.volume -= 0.1;
+                } else {
+                    clearInterval(fadeOutInterval);
+                    audioPlayer.volume = 0;
+                    
+                    // Switch track
+                    currentTrack = (currentTrack + 1) % playlist.length;
+                    audioPlayer.src = playlist[currentTrack];
+                    audioPlayer.play();
+                    updateNowPlaying();
+                    
+                    // Fade in
+                    const fadeInInterval = setInterval(() => {
+                        if (audioPlayer.volume < originalVolume - 0.1) {
+                            audioPlayer.volume += 0.1;
+                        } else {
+                            audioPlayer.volume = originalVolume;
+                            clearInterval(fadeInInterval);
+                            isFading = false;
+                        }
+                    }, 100);
+                }
+            }, 100);
+        }
+
+        function updateNowPlaying() {
+            const songName = playlist[currentTrack].split('/').pop().replace('.mp3', '');
+            document.getElementById('nowPlaying').textContent = `🎵 ${songName}`;
+        }
+
+        // Auto-play next track when current one ends
+        audioPlayer.addEventListener('ended', () => {
+            fadeToNextTrack();
+        });
+
         // Tab cloaking function
         const originalTitle = document.title;
         const originalIcon = document.querySelector("link[rel*='icon']") || document.createElement('link');
