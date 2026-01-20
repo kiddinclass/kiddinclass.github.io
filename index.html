@@ -335,6 +335,244 @@
             margin-top: 60px;
         }
 
+        .cat-mascot {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 100px;
+            height: 100px;
+            background: transparent;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 1000;
+            border: none;
+            animation: hop 0.6s ease-in-out 3;
+            filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.3));
+        }
+
+        .cat-mascot img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes hop {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .cat-mascot:hover {
+            transform: scale(1.15);
+            filter: drop-shadow(0 12px 32px rgba(74, 222, 128, 0.4));
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #222;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 2px solid #4ade80;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #4ade80;
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 32px;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #4ade80;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #2a2a2a;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .tab-btn:hover {
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.1);
+        }
+
+        .tab-btn.active {
+            color: #4ade80;
+            background: rgba(74, 222, 128, 0.2);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .update-section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .update-section h3 {
+            color: #4ade80;
+            margin: 0 0 15px 0;
+            font-size: 20px;
+        }
+
+        .update-section p {
+            color: #ccc;
+            line-height: 1.6;
+            margin: 0 0 10px 0;
+        }
+
+        .update-section ul {
+            color: #ccc;
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .update-section li {
+            margin-bottom: 8px;
+        }
+
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .feedback-form input,
+        .feedback-form textarea {
+            background: #2a2a2a;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 12px;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .feedback-form input:focus,
+        .feedback-form textarea:focus {
+            outline: none;
+            border-color: #4ade80;
+        }
+
+        .feedback-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            background: #4ade80;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .submit-btn:hover {
+            background: #22c55e;
+        }
+
+        .feedback-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .feedback-item {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #4ade80;
+        }
+
+        .feedback-item h4 {
+            color: #4ade80;
+            margin: 0 0 8px 0;
+            font-size: 16px;
+        }
+
+        .feedback-item p {
+            color: #ccc;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .feedback-item small {
+            color: #666;
+            font-size: 12px;
+        }
+
         @media (max-width: 768px) {
             .header-content {
                 flex-direction: column;
@@ -410,6 +648,70 @@
         <p>© 2026 Kiddinclass - Your Gaming Hub</p>
     </footer>
 
+    <!-- Cat Mascot -->
+    <div class="cat-mascot" onclick="openModal()">
+        <img src="images/cat-mascot.png" alt="Helper Cat">
+    </div>
+
+    <!-- Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Community Hub 🐱</h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('updates')">Updates</button>
+                <button class="tab-btn" onclick="switchTab('feedback')">Feedback</button>
+                <button class="tab-btn" onclick="switchTab('chat')">Chat Room</button>
+            </div>
+
+            <!-- Updates Tab -->
+            <div class="tab-content active" id="updates-tab">
+                <div class="update-section">
+                    <h3>🎉 Community Update - January 2026</h3>
+                    <p><strong>Welcome to the Community Update!</strong></p>
+                    <p>We're excited to introduce new features to make Kiddinclass even better:</p>
+                    <ul>
+                        <li>🐱 <strong>Cat Mascot</strong> - Your friendly guide (that's me!)</li>
+                        <li>💬 <strong>Feedback System</strong> - Share your thoughts and suggestions</li>
+                        <li>📬 <strong>Messages</strong> - Read announcements and updates</li>
+                        <li>🎵 <strong>Background Music</strong> - Enjoy PinkPantheress instrumentals while you browse</li>
+                    </ul>
+                    <p>Thank you for being part of our community! Keep gaming! 🎮</p>
+                </div>
+            </div>
+
+            <!-- Feedback Tab -->
+            <div class="tab-content" id="feedback-tab">
+                <form class="feedback-form" onsubmit="submitFeedback(event)">
+                    <input type="text" id="feedbackName" placeholder="Your name (optional)" maxlength="50">
+                    <textarea id="feedbackMessage" placeholder="Share your feedback, suggestions, or report issues..." required></textarea>
+                    <button type="submit" class="submit-btn">Submit Feedback</button>
+                </form>
+                
+                <h3 style="color: #4ade80; margin-top: 30px; margin-bottom: 15px;">Recent Feedback</h3>
+                <div class="feedback-list" id="feedbackList">
+                    <p style="color: #666; text-align: center;">No feedback yet. Be the first to share!</p>
+                </div>
+            </div>
+
+            <!-- Messages Tab -->
+            <div class="tab-content" id="chat-tab">
+                <div class="feedback-list" id="chatMessages" style="max-height: 300px; margin-bottom: 15px;">
+                    <p style="color: #666; text-align: center;">Loading chat...</p>
+                </div>
+                
+                <form class="feedback-form" onsubmit="sendMessage(event)">
+                    <input type="text" id="chatName" placeholder="Your name" maxlength="20" required>
+                    <input type="text" id="chatMessage" placeholder="Type your message..." maxlength="200" required>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Music Player
         let audioPlayer = new Audio();
@@ -420,10 +722,9 @@
 
         // Load playlist from folder
         const playlistFiles = [
-            'playlist/Last Valentines - pinkpantheress (Official Instrumental).mp3',
-            'playlist/PinkPantheress - I must apologise (Instrumental).mp3',
             'playlist/PinkPantheress - Passion (Instrumental).mp3',
-            // Add more songs here as needed
+            'playlist/PinkPantheress - I must apologise (Instrumental).mp3',
+            'playlist/Last Valentines - pinkpantheress (Official Instrumental).mp3'
         ];
 
         playlist = playlistFiles;
@@ -513,6 +814,151 @@
             fadeToNextTrack();
         });
 
+        // Modal Functions
+        function openModal() {
+            document.getElementById('modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Add active class to selected tab
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+
+            if (tabName === 'feedback') {
+                loadFeedback();
+            } else if (tabName === 'chat') {
+                loadChat();
+            }
+        }
+
+        // Feedback System with in-memory storage
+        let feedbackData = [];
+
+        async function submitFeedback(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('feedbackName').value || 'Anonymous';
+            const message = document.getElementById('feedbackMessage').value;
+            
+            const feedback = {
+                name: name,
+                message: message,
+                timestamp: new Date().toLocaleString()
+            };
+
+            feedbackData.unshift(feedback);
+            
+            // Keep only last 50 feedbacks
+            if (feedbackData.length > 50) {
+                feedbackData = feedbackData.slice(0, 50);
+            }
+            
+            // Clear form
+            document.getElementById('feedbackName').value = '';
+            document.getElementById('feedbackMessage').value = '';
+            
+            // Reload feedback
+            loadFeedback();
+            
+            alert('Thank you for your feedback! 🎉');
+        }
+
+        function loadFeedback() {
+            const feedbackList = document.getElementById('feedbackList');
+            
+            if (feedbackData.length === 0) {
+                feedbackList.innerHTML = '<p style="color: #666; text-align: center;">No feedback yet. Be the first to share!</p>';
+                return;
+            }
+            
+            feedbackList.innerHTML = feedbackData.map(fb => `
+                <div class="feedback-item">
+                    <h4>${fb.name}</h4>
+                    <p>${fb.message}</p>
+                    <small>${fb.timestamp}</small>
+                </div>
+            `).join('');
+        }
+
+        // Chat Room System
+        let chatData = [];
+        let chatInterval;
+
+        async function sendMessage(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('chatName').value;
+            const message = document.getElementById('chatMessage').value;
+            
+            const chatMsg = {
+                name: name,
+                message: message,
+                timestamp: new Date().toLocaleTimeString()
+            };
+
+            chatData.push(chatMsg);
+            
+            // Keep only last 100 messages
+            if (chatData.length > 100) {
+                chatData = chatData.slice(-100);
+            }
+            
+            // Clear message input
+            document.getElementById('chatMessage').value = '';
+            
+            // Reload chat
+            displayChat();
+        }
+
+        function loadChat() {
+            displayChat();
+            // Auto-refresh chat every 3 seconds
+            if (chatInterval) clearInterval(chatInterval);
+            chatInterval = setInterval(displayChat, 3000);
+        }
+
+        function displayChat() {
+            const chatMessages = document.getElementById('chatMessages');
+            
+            if (chatData.length === 0) {
+                chatMessages.innerHTML = '<p style="color: #666; text-align: center;">No messages yet. Start the conversation!</p>';
+                return;
+            }
+            
+            chatMessages.innerHTML = chatData.map(msg => `
+                <div class="feedback-item">
+                    <h4>${msg.name} <small style="float: right;">${msg.timestamp}</small></h4>
+                    <p>${msg.message}</p>
+                </div>
+            `).join('');
+            
+            // Auto-scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Stop auto-refresh when modal closes
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+            if (chatInterval) {
+                clearInterval(chatInterval);
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
         // Tab cloaking function
         const originalTitle = document.title;
         const originalIcon = document.querySelector("link[rel*='icon']") || document.createElement('link');
@@ -544,6 +990,22 @@
                 emoji: "⛏️",
                 category: "multiplayer",
                 tags: ["Sandbox", "Multiplayer"]
+            },
+            {
+                title: "Sonic Rush",
+                url: "/sonic-rush",
+                description: "High-speed action with Sonic and Blaze",
+                emoji: "💨",
+                category: "action",
+                tags: ["Platformer", "Speed"]
+            },
+            {
+                title: "Super Mario 64",
+                url: "/mario64",
+                description: "The classic 3D platformer adventure",
+                emoji: "🍄",
+                category: "adventure",
+                tags: ["Platformer", "Classic"]
             },
             {
                 title: "Duck Life",
@@ -640,6 +1102,14 @@
                 emoji: "🌟",
                 category: "adventure",
                 tags: ["RPG", "Adventure"]
+            },
+            {
+                title: "ULTRAKILL",
+                url: "/ultrakill",
+                description: "Fast-paced retro FPS with intense combat",
+                emoji: "💀",
+                category: "action",
+                tags: ["FPS", "Shooter"]
             },
             {
                 title: "Baldi's Basics Remastered",
