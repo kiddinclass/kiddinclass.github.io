@@ -721,19 +721,46 @@
 
         // TODO: Replace with your Firebase config from Firebase Console
         const firebaseConfig = {
-  apiKey: "AIzaSyCvEKzS5ZtBBHrpq__BW7x9pRrBqgAYJs4",
-  authDomain: "kiddinclass.firebaseapp.com",
-  databaseURL: "https://kiddinclass-default-rtdb.firebaseio.com",
-  projectId: "kiddinclass",
-  storageBucket: "kiddinclass.firebasestorage.app",
-  messagingSenderId: "334465289142",
-  appId: "1:334465289142:web:9abcc197129ff6f96c0f17",
-  measurementId: "G-44C43KRNWD"
-};
+            apiKey: "YOUR_API_KEY_HERE",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
+
+        // Swear filter
+        const badWords = [
+            'fuck', 'shit', 'damn', 'bitch', 'ass', 'hell', 'crap', 'bastard',
+            'dick', 'cock', 'pussy', 'fag', 'slut', 'whore', 'nigger', 'nigga',
+            'retard', 'idiot', 'stupid', 'dumb', 'kill', 'die', 'kys'
+        ];
+
+        function containsBadWords(text) {
+            const lowerText = text.toLowerCase();
+            for (let word of badWords) {
+                // Check for exact word or word with spaces/punctuation around it
+                const regex = new RegExp('\\b' + word + '\\b|' + word.split('').join('[\\W_]*'), 'i');
+                if (regex.test(lowerText)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function filterText(text) {
+            let filtered = text;
+            for (let word of badWords) {
+                const regex = new RegExp('\\b' + word + '\\b', 'gi');
+                filtered = filtered.replace(regex, '*'.repeat(word.length));
+            }
+            return filtered;
+        }
 
         // Feedback System with Firebase
         window.submitFeedback = function(event) {
@@ -741,6 +768,12 @@
             
             const name = document.getElementById('feedbackName').value || 'Anonymous';
             const message = document.getElementById('feedbackMessage').value;
+            
+            // Check for bad words
+            if (containsBadWords(name) || containsBadWords(message)) {
+                alert('⚠️ Please keep your feedback appropriate and respectful.');
+                return;
+            }
             
             const feedback = {
                 name: name,
@@ -801,6 +834,12 @@
             
             const name = document.getElementById('chatName').value;
             const message = document.getElementById('chatMessage').value;
+            
+            // Check for bad words
+            if (containsBadWords(name) || containsBadWords(message)) {
+                alert('⚠️ Please keep the chat clean and respectful.');
+                return;
+            }
             
             const chatMsg = {
                 name: name,
@@ -1144,6 +1183,22 @@
                 tags: ["Sandbox", "Multiplayer"]
             },
             {
+                title: "Sonic the Hedgehog 3",
+                url: "/sonic3",
+                description: "Classic high-speed platforming action",
+                emoji: "💨",
+                category: "action",
+                tags: ["Platformer", "Classic"]
+            },
+            {
+                title: "Super Mario 64",
+                url: "/mario64",
+                description: "The classic 3D platformer adventure",
+                emoji: "🍄",
+                category: "adventure",
+                tags: ["Platformer", "Classic"]
+            },
+            {
                 title: "Duck Life",
                 url: "/ducklife",
                 description: "Train your duck to win races and become champion",
@@ -1238,6 +1293,14 @@
                 emoji: "🌟",
                 category: "adventure",
                 tags: ["RPG", "Adventure"]
+            },
+            {
+                title: "ULTRAKILL",
+                url: "https://kiddinclass.github.io/Ultrakill-Prelude-Decompilation/",
+                description: "Fast-paced retro FPS with intense combat",
+                emoji: "💀",
+                category: "action",
+                tags: ["FPS", "Shooter"]
             },
             {
                 title: "Baldi's Basics Remastered",
