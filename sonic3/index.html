@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sonic the Hedgehog 3</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #1a1a1a;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .game-wrapper {
+            background: #222;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            border: 2px solid #4ade80;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .game-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .game-header h1 {
+            color: #4ade80;
+            margin: 0 0 10px 0;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .game-header p {
+            color: #888;
+            margin: 0;
+            font-size: 14px;
+        }
+        
+        #game-container {
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .game-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #4ade80;
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .game-button:hover {
+            background: #22c55e;
+            transform: translateY(-2px);
+        }
+        
+        .fullscreen-btn {
+            background: #2a2a2a;
+            color: #4ade80;
+            border: 2px solid #4ade80;
+        }
+        
+        .fullscreen-btn:hover {
+            background: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-wrapper" id="gameWrapper">
+        <div class="game-header">
+            <h1>💨 Sonic the Hedgehog 3</h1>
+            <p>Gotta go fast! Classic Genesis platforming action</p>
+        </div>
+        <div id="game-container"></div>
+        <div class="button-container">
+            <a href="/" class="game-button">← Back to Games</a>
+            <button onclick="toggleFullscreen()" class="game-button fullscreen-btn" id="fullscreenBtn">
+                ⛶ Fullscreen
+            </button>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/gh/EmulatorJS/EmulatorJS@latest/data/loader.js"></script>
+    <script>
+        EJS_player = '#game-container';
+        EJS_core = 'genesis';
+        EJS_gameUrl = 'sonic3.bin'; // Your ROM file
+        EJS_pathtodata = 'https://cdn.jsdelivr.net/gh/EmulatorJS/EmulatorJS@latest/data/';
+    </script>
+    
+    <script>
+        function toggleFullscreen() {
+            const wrapper = document.getElementById('gameWrapper');
+            const btn = document.getElementById('fullscreenBtn');
+            
+            if (!document.fullscreenElement) {
+                wrapper.requestFullscreen().then(() => {
+                    btn.textContent = '✕ Exit Fullscreen';
+                }).catch(err => {
+                    console.log('Fullscreen error:', err);
+                });
+            } else {
+                document.exitFullscreen().then(() => {
+                    btn.textContent = '⛶ Fullscreen';
+                });
+            }
+        }
+        
+        document.addEventListener('fullscreenchange', () => {
+            const btn = document.getElementById('fullscreenBtn');
+            if (!document.fullscreenElement) {
+                btn.textContent = '⛶ Fullscreen';
+            }
+        });
+    </script>
+</body>
+</html>
+```
+
+**Step 3: Get the Sonic 3 ROM**
+1. You need a Sonic 3 ROM file (`.bin` or `.md` format)
+2. Legally, you should own the original game
+3. Name it `sonic3.bin` and upload it to the `/sonic3/` folder
+
+**Your structure should be:**
+```
+kiddinclass.github.io/
+├── index.html
+├── sonic3/
+│   ├── index.html
+│   └── sonic3.bin  (your ROM file)
