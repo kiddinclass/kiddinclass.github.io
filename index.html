@@ -712,6 +712,147 @@
         </div>
     </div>
 
+    </script>
+
+    <script type="module">
+        // Import Firebase
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, push, onValue, query, limitToLast } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // TODO: Replace with your Firebase config from Firebase Console
+        const firebaseConfig = {
+  apiKey: "AIzaSyCvEKzS5ZtBBHrpq__BW7x9pRrBqgAYJs4",
+  authDomain: "kiddinclass.firebaseapp.com",
+  databaseURL: "https://kiddinclass-default-rtdb.firebaseio.com",
+  projectId: "kiddinclass",
+  storageBucket: "kiddinclass.firebasestorage.app",
+  messagingSenderId: "334465289142",
+  appId: "1:334465289142:web:9abcc197129ff6f96c0f17",
+  measurementId: "G-44C43KRNWD"
+};
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Feedback System with Firebase
+        window.submitFeedback = function(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('feedbackName').value || 'Anonymous';
+            const message = document.getElementById('feedbackMessage').value;
+            
+            const feedback = {
+                name: name,
+                message: message,
+                timestamp: new Date().toLocaleString()
+            };
+
+            // Save to Firebase
+            const feedbackRef = ref(database, 'feedback');
+            push(feedbackRef, feedback)
+                .then(() => {
+                    // Clear form
+                    document.getElementById('feedbackName').value = '';
+                    document.getElementById('feedbackMessage').value = '';
+                    alert('Thank you for your feedback! 🎉');
+                })
+                .catch((error) => {
+                    console.error('Error saving feedback:', error);
+                    alert('Failed to save feedback. Please try again.');
+                });
+        };
+
+        window.loadFeedback = function() {
+            const feedbackList = document.getElementById('feedbackList');
+            feedbackList.innerHTML = '<p style="color: #666; text-align: center;">Loading feedback...</p>';
+            
+            // Listen for feedback updates
+            const feedbackRef = ref(database, 'feedback');
+            const feedbackQuery = query(feedbackRef, limitToLast(50));
+            
+            onValue(feedbackQuery, (snapshot) => {
+                const feedbacks = [];
+                snapshot.forEach((childSnapshot) => {
+                    feedbacks.push(childSnapshot.val());
+                });
+                
+                if (feedbacks.length === 0) {
+                    feedbackList.innerHTML = '<p style="color: #666; text-align: center;">No feedback yet. Be the first to share!</p>';
+                    return;
+                }
+                
+                // Reverse to show newest first
+                feedbacks.reverse();
+                
+                feedbackList.innerHTML = feedbacks.map(fb => `
+                    <div class="feedback-item">
+                        <h4>${fb.name}</h4>
+                        <p>${fb.message}</p>
+                        <small>${fb.timestamp}</small>
+                    </div>
+                `).join('');
+            });
+        };
+
+        // Chat Room System with Firebase
+        window.sendMessage = function(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('chatName').value;
+            const message = document.getElementById('chatMessage').value;
+            
+            const chatMsg = {
+                name: name,
+                message: message,
+                timestamp: new Date().toLocaleTimeString()
+            };
+
+            // Save to Firebase
+            const chatRef = ref(database, 'chat');
+            push(chatRef, chatMsg)
+                .then(() => {
+                    // Clear message input
+                    document.getElementById('chatMessage').value = '';
+                })
+                .catch((error) => {
+                    console.error('Error sending message:', error);
+                    alert('Failed to send message. Please try again.');
+                });
+        };
+
+        window.loadChat = function() {
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '<p style="color: #666; text-align: center;">Loading chat...</p>';
+            
+            // Listen for chat updates in real-time
+            const chatRef = ref(database, 'chat');
+            const chatQuery = query(chatRef, limitToLast(100));
+            
+            onValue(chatQuery, (snapshot) => {
+                const messages = [];
+                snapshot.forEach((childSnapshot) => {
+                    messages.push(childSnapshot.val());
+                });
+                
+                if (messages.length === 0) {
+                    chatMessages.innerHTML = '<p style="color: #666; text-align: center;">No messages yet. Start the conversation!</p>';
+                    return;
+                }
+                
+                chatMessages.innerHTML = messages.map(msg => `
+                    <div class="feedback-item">
+                        <h4>${msg.name} <small style="float: right;">${msg.timestamp}</small></h4>
+                        <p>${msg.message}</p>
+                    </div>
+                `).join('');
+                
+                // Auto-scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        };
+    </script>
+
     <script>
         // Music Player
         let audioPlayer = new Audio();
@@ -839,8 +980,8 @@
             }
         }
 
-        // Feedback System with persistent shared storage
-        async function submitFeedback(event) {
+        // Feedback System with Firebase
+        function submitFeedback(event) {
             event.preventDefault();
             
             const name = document.getElementById('feedbackName').value || 'Anonymous';
@@ -849,65 +990,45 @@
             const feedback = {
                 name: name,
                 message: message,
-                timestamp: new Date().toLocaleString(),
-                id: Date.now()
+                timestamp: new Date().toLocaleString()
             };
 
-            try {
-                // Get existing feedback
-                let feedbackList = [];
-                try {
-                    const existingData = await window.storage.get('kiddinclass-feedback', true);
-                    if (existingData && existingData.value) {
-                        feedbackList = JSON.parse(existingData.value);
-                    }
-                } catch (e) {
-                    // Key doesn't exist yet, start fresh
-                    feedbackList = [];
-                }
-                
-                // Add new feedback
-                feedbackList.unshift(feedback);
-                
-                // Keep only last 50 feedbacks
-                if (feedbackList.length > 50) {
-                    feedbackList = feedbackList.slice(0, 50);
-                }
-                
-                // Save to shared storage
-                await window.storage.set('kiddinclass-feedback', JSON.stringify(feedbackList), true);
-                
-                // Clear form
-                document.getElementById('feedbackName').value = '';
-                document.getElementById('feedbackMessage').value = '';
-                
-                // Reload feedback
-                await loadFeedback();
-                
-                alert('Thank you for your feedback! 🎉');
-            } catch (error) {
-                console.error('Error saving feedback:', error);
-                alert('Failed to save feedback. Please try again.');
-            }
+            // Save to Firebase
+            const feedbackRef = ref(database, 'feedback');
+            push(feedbackRef, feedback)
+                .then(() => {
+                    // Clear form
+                    document.getElementById('feedbackName').value = '';
+                    document.getElementById('feedbackMessage').value = '';
+                    alert('Thank you for your feedback! 🎉');
+                })
+                .catch((error) => {
+                    console.error('Error saving feedback:', error);
+                    alert('Failed to save feedback. Please try again.');
+                });
         }
 
-        async function loadFeedback() {
+        function loadFeedback() {
             const feedbackList = document.getElementById('feedbackList');
+            feedbackList.innerHTML = '<p style="color: #666; text-align: center;">Loading feedback...</p>';
             
-            try {
-                const data = await window.storage.get('kiddinclass-feedback', true);
-                
-                if (!data || !data.value) {
-                    feedbackList.innerHTML = '<p style="color: #666; text-align: center;">No feedback yet. Be the first to share!</p>';
-                    return;
-                }
-                
-                const feedbacks = JSON.parse(data.value);
+            // Listen for feedback updates
+            const feedbackRef = ref(database, 'feedback');
+            const feedbackQuery = query(feedbackRef, limitToLast(50));
+            
+            onValue(feedbackQuery, (snapshot) => {
+                const feedbacks = [];
+                snapshot.forEach((childSnapshot) => {
+                    feedbacks.push(childSnapshot.val());
+                });
                 
                 if (feedbacks.length === 0) {
                     feedbackList.innerHTML = '<p style="color: #666; text-align: center;">No feedback yet. Be the first to share!</p>';
                     return;
                 }
+                
+                // Reverse to show newest first
+                feedbacks.reverse();
                 
                 feedbackList.innerHTML = feedbacks.map(fb => `
                     <div class="feedback-item">
@@ -916,16 +1037,13 @@
                         <small>${fb.timestamp}</small>
                     </div>
                 `).join('');
-            } catch (error) {
-                console.error('Error loading feedback:', error);
-                feedbackList.innerHTML = '<p style="color: #666; text-align: center;">No feedback yet. Be the first to share!</p>';
-            }
+            });
         }
 
-        // Chat Room System with persistent shared storage
+        // Chat Room System with Firebase
         let chatInterval;
 
-        async function sendMessage(event) {
+        function sendMessage(event) {
             event.preventDefault();
             
             const name = document.getElementById('chatName').value;
@@ -934,71 +1052,42 @@
             const chatMsg = {
                 name: name,
                 message: message,
-                timestamp: new Date().toLocaleTimeString(),
-                id: Date.now()
+                timestamp: new Date().toLocaleTimeString()
             };
 
-            try {
-                // Get existing messages
-                let chatData = [];
-                try {
-                    const existingData = await window.storage.get('kiddinclass-chat', true);
-                    if (existingData && existingData.value) {
-                        chatData = JSON.parse(existingData.value);
-                    }
-                } catch (e) {
-                    // Key doesn't exist yet, start fresh
-                    chatData = [];
-                }
-                
-                // Add new message
-                chatData.push(chatMsg);
-                
-                // Keep only last 100 messages
-                if (chatData.length > 100) {
-                    chatData = chatData.slice(-100);
-                }
-                
-                // Save to shared storage
-                await window.storage.set('kiddinclass-chat', JSON.stringify(chatData), true);
-                
-                // Clear message input
-                document.getElementById('chatMessage').value = '';
-                
-                // Reload chat
-                await displayChat();
-            } catch (error) {
-                console.error('Error sending message:', error);
-                alert('Failed to send message. Please try again.');
-            }
+            // Save to Firebase
+            const chatRef = ref(database, 'chat');
+            push(chatRef, chatMsg)
+                .then(() => {
+                    // Clear message input
+                    document.getElementById('chatMessage').value = '';
+                })
+                .catch((error) => {
+                    console.error('Error sending message:', error);
+                    alert('Failed to send message. Please try again.');
+                });
         }
 
-        async function loadChat() {
-            await displayChat();
-            // Auto-refresh chat every 3 seconds
-            if (chatInterval) clearInterval(chatInterval);
-            chatInterval = setInterval(displayChat, 3000);
-        }
-
-        async function displayChat() {
+        function loadChat() {
             const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '<p style="color: #666; text-align: center;">Loading chat...</p>';
             
-            try {
-                const data = await window.storage.get('kiddinclass-chat', true);
+            // Listen for chat updates in real-time
+            const chatRef = ref(database, 'chat');
+            const chatQuery = query(chatRef, limitToLast(100));
+            
+            onValue(chatQuery, (snapshot) => {
+                const messages = [];
+                snapshot.forEach((childSnapshot) => {
+                    messages.push(childSnapshot.val());
+                });
                 
-                if (!data || !data.value) {
+                if (messages.length === 0) {
                     chatMessages.innerHTML = '<p style="color: #666; text-align: center;">No messages yet. Start the conversation!</p>';
                     return;
                 }
                 
-                const chatData = JSON.parse(data.value);
-                
-                if (chatData.length === 0) {
-                    chatMessages.innerHTML = '<p style="color: #666; text-align: center;">No messages yet. Start the conversation!</p>';
-                    return;
-                }
-                
-                chatMessages.innerHTML = chatData.map(msg => `
+                chatMessages.innerHTML = messages.map(msg => `
                     <div class="feedback-item">
                         <h4>${msg.name} <small style="float: right;">${msg.timestamp}</small></h4>
                         <p>${msg.message}</p>
@@ -1007,18 +1096,12 @@
                 
                 // Auto-scroll to bottom
                 chatMessages.scrollTop = chatMessages.scrollHeight;
-            } catch (error) {
-                console.error('Error loading chat:', error);
-                chatMessages.innerHTML = '<p style="color: #666; text-align: center;">No messages yet. Start the conversation!</p>';
-            }
+            });
         }
 
-        // Stop auto-refresh when modal closes
+        // Stop listening when modal closes
         function closeModal() {
             document.getElementById('modal').classList.remove('active');
-            if (chatInterval) {
-                clearInterval(chatInterval);
-            }
         }
 
         // Close modal when clicking outside
