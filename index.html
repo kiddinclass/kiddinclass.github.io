@@ -670,13 +670,34 @@
             <!-- Updates Tab -->
             <div class="tab-content active" id="updates-tab">
                 <div class="update-section">
+                    <h3>🎮 New Games Update - January 2026</h3>
+                    <p><strong>Exciting new games added!</strong></p>
+                    <ul>
+                        <li>🍄 <strong>Super Mario 64</strong> - The classic 3D platformer is now playable!</li>
+                        <li>💀 <strong>ULTRAKILL Prelude</strong> - Fast-paced retro FPS action!</li>
+                        <li>🔺 <strong>Geometry Dash Lite</strong> - Rhythm-based platforming challenge!</li>
+                    </ul>
+                </div>
+                
+                <div class="update-section">
+                    <h3>🛡️ Safety & Moderation Update</h3>
+                    <p><strong>Keeping our community safe and friendly!</strong></p>
+                    <ul>
+                        <li>🚫 <strong>Swear Filter</strong> - Chat and feedback now filter inappropriate language</li>
+                        <li>💬 <strong>Real-time Chat</strong> - Messages now sync instantly across all users via Firebase</li>
+                        <li>🔒 <strong>Better Security</strong> - Database rules protect against spam and abuse</li>
+                    </ul>
+                    <p>Remember to keep conversations respectful and friendly! ✨</p>
+                </div>
+                
+                <div class="update-section">
                     <h3>🎉 Community Update - January 2026</h3>
                     <p><strong>Welcome to the Community Update!</strong></p>
                     <p>We're excited to introduce new features to make Kiddinclass even better:</p>
                     <ul>
                         <li>🐱 <strong>Cat Mascot</strong> - Your friendly guide (that's me!)</li>
                         <li>💬 <strong>Feedback System</strong> - Share your thoughts and suggestions</li>
-                        <li>📬 <strong>Messages</strong> - Read announcements and updates</li>
+                        <li>📬 <strong>Chat Room</strong> - Talk with other players in real-time</li>
                         <li>🎵 <strong>Background Music</strong> - Enjoy PinkPantheress instrumentals while you browse</li>
                     </ul>
                     <p>Thank you for being part of our community! Keep gaming! 🎮</p>
@@ -720,16 +741,16 @@
         import { getDatabase, ref, push, onValue, query, limitToLast } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         // TODO: Replace with your Firebase config from Firebase Console
-const firebaseConfig = {
-  apiKey: "AIzaSyCvEKzS5ZtBBHrpq__BW7x9pRrBqgAYJs4",
-  authDomain: "kiddinclass.firebaseapp.com",
-  databaseURL: "https://kiddinclass-default-rtdb.firebaseio.com",
-  projectId: "kiddinclass",
-  storageBucket: "kiddinclass.firebasestorage.app",
-  messagingSenderId: "334465289142",
-  appId: "1:334465289142:web:9abcc197129ff6f96c0f17",
-  measurementId: "G-44C43KRNWD"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyCvEKzS5ZtBBHrpq__BW7x9pRrBqgAYJs4",
+            authDomain: "kiddinclass.firebaseapp.com",
+            databaseURL: "https://kiddinclass-default-rtdb.firebaseio.com",
+            projectId: "kiddinclass",
+            storageBucket: "kiddinclass.firebasestorage.app",
+            messagingSenderId: "334465289142",
+            appId: "1:334465289142:web:9abcc197129ff6f96c0f17",
+            measurementId: "G-44C43KRNWD"
+        };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -1294,6 +1315,14 @@ const firebaseConfig = {
                 emoji: "💀",
                 category: "action",
                 tags: ["FPS", "Shooter"]
+            },
+            {
+                title: "Geometry Dash Lite",
+                url: "https://kiddinclass.github.io/geometry-dash/",
+                description: "Rhythm-based platforming action!",
+                emoji: "🔺",
+                category: "action",
+                tags: ["Platformer", "Rhythm"]
             },
             {
                 title: "Baldi's Basics Remastered",
