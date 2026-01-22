@@ -720,15 +720,16 @@
         import { getDatabase, ref, push, onValue, query, limitToLast } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         // TODO: Replace with your Firebase config from Firebase Console
-        const firebaseConfig = {
-            apiKey: "YOUR_API_KEY_HERE",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
+const firebaseConfig = {
+  apiKey: "AIzaSyCvEKzS5ZtBBHrpq__BW7x9pRrBqgAYJs4",
+  authDomain: "kiddinclass.firebaseapp.com",
+  databaseURL: "https://kiddinclass-default-rtdb.firebaseio.com",
+  projectId: "kiddinclass",
+  storageBucket: "kiddinclass.firebasestorage.app",
+  messagingSenderId: "334465289142",
+  appId: "1:334465289142:web:9abcc197129ff6f96c0f17",
+  measurementId: "G-44C43KRNWD"
+};
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -1181,14 +1182,6 @@
                 emoji: "⛏️",
                 category: "multiplayer",
                 tags: ["Sandbox", "Multiplayer"]
-            },
-            {
-                title: "Sonic the Hedgehog 3",
-                url: "/sonic3",
-                description: "Classic high-speed platforming action",
-                emoji: "💨",
-                category: "action",
-                tags: ["Platformer", "Classic"]
             },
             {
                 title: "Super Mario 64",
