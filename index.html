@@ -163,6 +163,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            position: relative;
         }
 
         .account-btn:hover {
@@ -173,6 +174,29 @@
             background: #2a2a2a;
             color: #4ade80;
             border: 2px solid #4ade80;
+        }
+
+        .account-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 10px;
+            background: #222;
+            border: 2px solid #4ade80;
+            border-radius: 12px;
+            padding: 20px;
+            min-width: 320px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+        }
+
+        .account-dropdown.active {
+            display: block;
+        }
+
+        .account-container {
+            position: relative;
         }
 
         .search-bar {
@@ -661,7 +685,46 @@
                 </div>
                 <div class="now-playing" id="nowPlaying">No music playing</div>
             </div>
-            <button class="account-btn" id="accountBtn" onclick="openAccountModal()">👤 Login</button>
+            <div class="account-container">
+                <button class="account-btn" id="accountBtn" onclick="toggleAccountDropdown()">👤 Login</button>
+                <div class="account-dropdown" id="accountDropdown">
+                    <!-- Login Section -->
+                    <div id="loginSection">
+                        <h3 style="color: #4ade80; margin-bottom: 15px; font-size: 18px;">Login</h3>
+                        <form class="feedback-form" onsubmit="return loginUser(event)" style="gap: 10px;">
+                            <input type="text" id="loginUsername" placeholder="Username" minlength="3" maxlength="15" required>
+                            <input type="password" id="loginPassword" placeholder="Password" minlength="4" required>
+                            <button type="submit" class="submit-btn">Login</button>
+                        </form>
+                        <div style="text-align: center; margin-top: 12px;">
+                            <button onclick="showRegister()" class="submit-btn" style="background: transparent; color: #4ade80; border: 2px solid #4ade80; font-size: 13px; padding: 8px 16px;">Create Account</button>
+                        </div>
+                    </div>
+
+                    <!-- Register Section -->
+                    <div id="registerSection" style="display: none;">
+                        <h3 style="color: #4ade80; margin-bottom: 15px; font-size: 18px;">Register</h3>
+                        <form class="feedback-form" onsubmit="return registerUser(event)" style="gap: 10px;">
+                            <input type="text" id="registerUsername" placeholder="Username" minlength="3" maxlength="15" required>
+                            <input type="password" id="registerPassword" placeholder="Password" minlength="4" required>
+                            <input type="password" id="registerPasswordConfirm" placeholder="Confirm Password" minlength="4" required>
+                            <button type="submit" class="submit-btn">Create Account</button>
+                        </form>
+                        <div style="text-align: center; margin-top: 12px;">
+                            <button onclick="showLogin()" class="submit-btn" style="background: transparent; color: #4ade80; border: 2px solid #4ade80; font-size: 13px; padding: 8px 16px;">Back to Login</button>
+                        </div>
+                    </div>
+
+                    <!-- Account Info Section -->
+                    <div id="accountSection" style="display: none;">
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <div style="width: 60px; height: 60px; background: linear-gradient(135deg, #4ade80, #22c55e); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 30px;">👤</div>
+                            <h3 style="color: #4ade80; margin: 0; font-size: 18px;" id="currentUsername"></h3>
+                        </div>
+                        <button onclick="logoutUser()" class="submit-btn" style="background: #e74c3c; width: 100%;">Logout</button>
+                    </div>
+                </div>
+            </div>
             <div class="tab-cloak">
                 <button class="cloak-btn" onclick="cloakTab('ixl')">IXL</button>
                 <button class="cloak-btn" onclick="cloakTab('gimkit')">Gimkit</button>
@@ -780,6 +843,14 @@
     </script>
 
     <script type="module">
+        // Define this function immediately in global scope
+        window.toggleAccountDropdown = function() {
+            const dropdown = document.getElementById('accountDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('active');
+            }
+        };
+
         // Import Firebase
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getDatabase, ref, push, onValue, query, limitToLast, get, set } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
@@ -907,8 +978,8 @@
                 updateLoginUI();
                 alert('Account created successfully! 🎉');
                 
-                // Close account modal
-                closeAccountModal();
+                // Close dropdown
+                document.getElementById('accountDropdown').classList.remove('active');
             } catch (error) {
                 console.error('Registration error:', error);
                 alert('Failed to create account. Please try again.');
@@ -944,10 +1015,12 @@
                 updateLoginUI();
                 alert('Login successful! 🎉');
                 
-                // Close account modal and open community hub chat
-                closeAccountModal();
-                openModal();
-                switchTab('chat');
+                // Close dropdown and open chat
+                document.getElementById('accountDropdown').classList.remove('active');
+                setTimeout(() => {
+                    openModal();
+                    switchTab('chat');
+                }, 300);
             } catch (error) {
                 console.error('Login error:', error);
                 alert('Failed to login. Please try again.');
@@ -973,6 +1046,15 @@
 
         // Check login on page load
         checkLogin();
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const accountContainer = document.querySelector('.account-container');
+            const dropdown = document.getElementById('accountDropdown');
+            if (dropdown && accountContainer && !accountContainer.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
 
         // Swear filter
         const badWords = [
@@ -1430,20 +1512,11 @@
         // Close modal when clicking outside
         window.addEventListener('DOMContentLoaded', function() {
             const modal = document.getElementById('modal');
-            const accountModal = document.getElementById('accountModal');
             
             if (modal) {
                 modal.addEventListener('click', function(e) {
                     if (e.target === this) {
                         closeModal();
-                    }
-                });
-            }
-            
-            if (accountModal) {
-                accountModal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        closeAccountModal();
                     }
                 });
             }
