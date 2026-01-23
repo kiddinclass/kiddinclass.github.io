@@ -339,19 +339,28 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            width: 100px;
-            height: 100px;
+            width: 120px;
+            height: 120px;
             background: transparent;
             border-radius: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s;
             z-index: 1000;
             border: none;
             animation: hop 0.6s ease-in-out 3;
             filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.3));
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .cat-mascot.moving {
+            bottom: auto;
+            right: auto;
+            top: 80px;
+            left: calc(50% - 60px);
+            transform: scale(1.3);
+            z-index: 2001;
         }
 
         .cat-mascot img {
@@ -369,7 +378,7 @@
             }
         }
 
-        .cat-mascot:hover {
+        .cat-mascot:not(.moving):hover {
             transform: scale(1.15);
             filter: drop-shadow(0 12px 32px rgba(74, 222, 128, 0.4));
         }
@@ -395,12 +404,14 @@
             background: #222;
             border-radius: 16px;
             padding: 30px;
+            padding-top: 100px;
             max-width: 600px;
             width: 90%;
             max-height: 80vh;
             overflow-y: auto;
             border: 2px solid #4ade80;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
         }
 
         .modal-header {
@@ -665,6 +676,7 @@
                 <button class="tab-btn active" onclick="switchTab('updates')">Updates</button>
                 <button class="tab-btn" onclick="switchTab('feedback')">Feedback</button>
                 <button class="tab-btn" onclick="switchTab('chat')">Chat Room</button>
+                <button class="tab-btn" onclick="switchTab('account')">Account</button>
             </div>
 
             <!-- Updates Tab -->
@@ -738,23 +750,178 @@
     <script type="module">
         // Import Firebase
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getDatabase, ref, push, onValue, query, limitToLast } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+        import { getDatabase, ref, push, onValue, query, limitToLast, get, set } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         // TODO: Replace with your Firebase config from Firebase Console
-const firebaseConfig = {
-  apiKey: "AIzaSyCvEKzS5ZtBBHrpq__BW7x9pRrBqgAYJs4",
-  authDomain: "kiddinclass.firebaseapp.com",
-  databaseURL: "https://kiddinclass-default-rtdb.firebaseio.com",
-  projectId: "kiddinclass",
-  storageBucket: "kiddinclass.firebasestorage.app",
-  messagingSenderId: "334465289142",
-  appId: "1:334465289142:web:9abcc197129ff6f96c0f17",
-  measurementId: "G-44C43KRNWD"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyCvEKzS5ZtBBHrpq__BW7x9pRrBqgAYJs4",
+            authDomain: "kiddinclass.firebaseapp.com",
+            databaseURL: "https://kiddinclass-default-rtdb.firebaseio.com",
+            projectId: "kiddinclass",
+            storageBucket: "kiddinclass.firebasestorage.app",
+            messagingSenderId: "334465289142",
+            appId: "1:334465289142:web:9abcc197129ff6f96c0f17",
+            measurementId: "G-44C43KRNWD"
+        };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const database = getDatabase(app);
+
+        // User session management
+        let currentUser = null;
+
+        // Check if user is logged in (using localStorage for persistence)
+        function checkLogin() {
+            const savedUser = localStorage.getItem('kiddinclass_user');
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                updateLoginUI();
+            }
+        }
+
+        function updateLoginUI() {
+            const loginStatus = document.getElementById('chatLoginStatus');
+            const chatForm = document.getElementById('chatForm');
+            
+            if (currentUser) {
+                loginStatus.innerHTML = `<span style="color: #4ade80;">✓ Logged in as: <strong>${currentUser.username}</strong></span>`;
+                chatForm.style.display = 'flex';
+                
+                // Update account section
+                document.getElementById('currentUsername').textContent = currentUser.username;
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('registerSection').style.display = 'none';
+                document.getElementById('accountSection').style.display = 'block';
+            } else {
+                loginStatus.innerHTML = `<span style="color: #888;">Please login to chat</span>`;
+                chatForm.style.display = 'none';
+                
+                // Update account section
+                document.getElementById('loginSection').style.display = 'block';
+                document.getElementById('registerSection').style.display = 'none';
+                document.getElementById('accountSection').style.display = 'none';
+            }
+        }
+
+        // Simple hash function (for demo - in production use proper encryption)
+        function simpleHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                const char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return hash.toString();
+        }
+
+        window.registerUser = async function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('registerUsername').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
+            
+            if (password !== passwordConfirm) {
+                alert('Passwords do not match!');
+                return;
+            }
+            
+            if (containsBadWords(username)) {
+                alert('⚠️ Username contains inappropriate language.');
+                return;
+            }
+            
+            try {
+                // Check if username exists
+                const userRef = ref(database, `users/${username.toLowerCase()}`);
+                const snapshot = await get(userRef);
+                
+                if (snapshot.exists()) {
+                    alert('Username already taken! Please choose another.');
+                    return;
+                }
+                
+                // Create user account
+                const userData = {
+                    username: username,
+                    passwordHash: simpleHash(password),
+                    createdAt: new Date().toISOString()
+                };
+                
+                await set(userRef, userData);
+                
+                // Auto-login
+                currentUser = { username: username };
+                localStorage.setItem('kiddinclass_user', JSON.stringify(currentUser));
+                
+                updateLoginUI();
+                alert('Account created successfully! 🎉');
+                
+                // Switch to account tab
+                switchTab('account');
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Failed to create account. Please try again.');
+            }
+        };
+
+        window.loginUser = async function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const userRef = ref(database, `users/${username.toLowerCase()}`);
+                const snapshot = await get(userRef);
+                
+                if (!snapshot.exists()) {
+                    alert('Username not found!');
+                    return;
+                }
+                
+                const userData = snapshot.val();
+                
+                if (userData.passwordHash !== simpleHash(password)) {
+                    alert('Incorrect password!');
+                    return;
+                }
+                
+                // Login successful
+                currentUser = { username: userData.username };
+                localStorage.setItem('kiddinclass_user', JSON.stringify(currentUser));
+                
+                updateLoginUI();
+                alert('Login successful! 🎉');
+                
+                // Switch to chat tab
+                switchTab('chat');
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Failed to login. Please try again.');
+            }
+        };
+
+        window.logoutUser = function() {
+            currentUser = null;
+            localStorage.removeItem('kiddinclass_user');
+            updateLoginUI();
+            alert('Logged out successfully!');
+        };
+
+        window.showRegister = function() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('registerSection').style.display = 'block';
+        };
+
+        window.showLogin = function() {
+            document.getElementById('registerSection').style.display = 'none';
+            document.getElementById('loginSection').style.display = 'block';
+        };
+
+        // Check login on page load
+        checkLogin();
 
         // Swear filter
         const badWords = [
@@ -854,31 +1021,44 @@ const firebaseConfig = {
         window.sendMessage = function(event) {
             event.preventDefault();
             
-            const name = document.getElementById('chatName').value;
+            if (!currentUser) {
+                alert('Please login to send messages!');
+                return;
+            }
+            
             const message = document.getElementById('chatMessage').value;
             
+            console.log('Attempting to send message:', { username: currentUser.username, message });
+            
             // Check for bad words
-            if (containsBadWords(name) || containsBadWords(message)) {
+            if (containsBadWords(message)) {
                 alert('⚠️ Please keep the chat clean and respectful.');
                 return;
             }
             
             const chatMsg = {
-                name: name,
+                name: currentUser.username,
                 message: message,
                 timestamp: new Date().toLocaleTimeString()
             };
 
+            console.log('Chat message object:', chatMsg);
+
             // Save to Firebase
             const chatRef = ref(database, 'chat');
+            console.log('Firebase reference created');
+            
             push(chatRef, chatMsg)
                 .then(() => {
+                    console.log('Message sent successfully!');
                     // Clear message input
                     document.getElementById('chatMessage').value = '';
                 })
                 .catch((error) => {
-                    console.error('Error sending message:', error);
-                    alert('Failed to send message. Please try again.');
+                    console.error('Detailed error sending message:', error);
+                    console.error('Error code:', error.code);
+                    console.error('Error message:', error.message);
+                    alert('Failed to send message: ' + error.message);
                 });
         };
 
@@ -1018,11 +1198,32 @@ const firebaseConfig = {
 
         // Modal Functions
         function openModal() {
-            document.getElementById('modal').classList.add('active');
+            const modal = document.getElementById('modal');
+            const cat = document.querySelector('.cat-mascot');
+            
+            modal.classList.add('active');
+            setTimeout(() => {
+                cat.classList.add('moving');
+            }, 10);
         }
 
         function closeModal() {
-            document.getElementById('modal').classList.remove('active');
+            const modal = document.getElementById('modal');
+            const cat = document.querySelector('.cat-mascot');
+            
+            console.log('Closing modal, removing moving class');
+            console.log('Cat before:', cat.classList);
+            
+            // Remove moving class to trigger return animation
+            cat.classList.remove('moving');
+            
+            console.log('Cat after:', cat.classList);
+            
+            // Wait for animation to complete before hiding modal
+            setTimeout(() => {
+                modal.classList.remove('active');
+                console.log('Modal closed');
+            }, 600);
         }
 
         function switchTab(tabName) {
