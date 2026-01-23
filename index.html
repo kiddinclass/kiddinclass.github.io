@@ -927,30 +927,54 @@
             const accountBtn = document.getElementById('accountBtn');
             
             if (currentUser) {
-                loginStatus.innerHTML = `<span style="color: #4ade80;">✓ Logged in as: <strong>${currentUser.username}</strong></span>`;
-                chatForm.style.display = 'flex';
+                if (loginStatus) {
+                    loginStatus.innerHTML = `<span style="color: #4ade80;">✓ Logged in as: <strong>${currentUser.username}</strong></span>`;
+                }
+                if (chatForm) {
+                    chatForm.style.display = 'flex';
+                }
                 
                 // Update header button
-                accountBtn.innerHTML = `👤 ${currentUser.username}`;
-                accountBtn.classList.add('logged-in');
+                if (accountBtn) {
+                    accountBtn.innerHTML = `👤 ${currentUser.username}`;
+                    accountBtn.classList.add('logged-in');
+                }
                 
                 // Update account section
-                document.getElementById('currentUsername').textContent = currentUser.username;
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('registerSection').style.display = 'none';
-                document.getElementById('accountSection').style.display = 'block';
+                const currentUsernameEl = document.getElementById('currentUsername');
+                if (currentUsernameEl) {
+                    currentUsernameEl.textContent = currentUser.username;
+                }
+                
+                const loginSection = document.getElementById('loginSection');
+                const registerSection = document.getElementById('registerSection');
+                const accountSection = document.getElementById('accountSection');
+                
+                if (loginSection) loginSection.style.display = 'none';
+                if (registerSection) registerSection.style.display = 'none';
+                if (accountSection) accountSection.style.display = 'block';
             } else {
-                loginStatus.innerHTML = `<span style="color: #888;">Please login to chat</span>`;
-                chatForm.style.display = 'none';
+                if (loginStatus) {
+                    loginStatus.innerHTML = `<span style="color: #888;">Please login to chat</span>`;
+                }
+                if (chatForm) {
+                    chatForm.style.display = 'none';
+                }
                 
                 // Update header button
-                accountBtn.innerHTML = '👤 Login';
-                accountBtn.classList.remove('logged-in');
+                if (accountBtn) {
+                    accountBtn.innerHTML = '👤 Login';
+                    accountBtn.classList.remove('logged-in');
+                }
                 
                 // Update account section
-                document.getElementById('loginSection').style.display = 'block';
-                document.getElementById('registerSection').style.display = 'none';
-                document.getElementById('accountSection').style.display = 'none';
+                const loginSection = document.getElementById('loginSection');
+                const registerSection = document.getElementById('registerSection');
+                const accountSection = document.getElementById('accountSection');
+                
+                if (loginSection) loginSection.style.display = 'block';
+                if (registerSection) registerSection.style.display = 'none';
+                if (accountSection) accountSection.style.display = 'none';
             }
         }
 
