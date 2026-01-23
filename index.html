@@ -962,17 +962,22 @@
                     return;
                 }
                 
-                // Create user account
+                // Create user account with additional data
                 const userData = {
                     username: username,
                     passwordHash: simpleHash(password),
-                    createdAt: new Date().toISOString()
+                    createdAt: new Date().toISOString(),
+                    messageCount: 0,
+                    lastActive: new Date().toISOString()
                 };
                 
                 await set(userRef, userData);
                 
                 // Auto-login
-                currentUser = { username: username };
+                currentUser = { 
+                    username: username,
+                    createdAt: userData.createdAt 
+                };
                 localStorage.setItem('kiddinclass_user', JSON.stringify(currentUser));
                 
                 updateLoginUI();
@@ -1008,8 +1013,14 @@
                     return;
                 }
                 
+                // Update last active time
+                await set(ref(database, `users/${username.toLowerCase()}/lastActive`), new Date().toISOString());
+                
                 // Login successful
-                currentUser = { username: userData.username };
+                currentUser = { 
+                    username: userData.username,
+                    createdAt: userData.createdAt 
+                };
                 localStorage.setItem('kiddinclass_user', JSON.stringify(currentUser));
                 
                 updateLoginUI();
@@ -1178,9 +1189,10 @@
             }
             
             const chatMsg = {
-                name: currentUser.username,
+                username: currentUser.username, // Changed from 'name' to 'username'
                 message: message,
-                timestamp: new Date().toLocaleTimeString()
+                timestamp: new Date().toISOString(),
+                displayTime: new Date().toLocaleTimeString()
             };
 
             console.log('Chat message object:', chatMsg);
@@ -1190,8 +1202,15 @@
             console.log('Firebase reference created');
             
             push(chatRef, chatMsg)
-                .then(() => {
+                .then(async () => {
                     console.log('Message sent successfully!');
+                    
+                    // Update user's message count
+                    const userRef = ref(database, `users/${currentUser.username.toLowerCase()}/messageCount`);
+                    const snapshot = await get(userRef);
+                    const currentCount = snapshot.exists() ? snapshot.val() : 0;
+                    await set(userRef, currentCount + 1);
+                    
                     // Clear message input
                     document.getElementById('chatMessage').value = '';
                 })
@@ -1203,7 +1222,7 @@
                 });
         };
 
-        window.loadChat = function() {
+        function loadChat() {
             const chatMessages = document.getElementById('chatMessages');
             chatMessages.innerHTML = '<p style="color: #666; text-align: center;">Loading chat...</p>';
             
@@ -1222,17 +1241,23 @@
                     return;
                 }
                 
-                chatMessages.innerHTML = messages.map(msg => `
-                    <div class="feedback-item">
-                        <h4>${msg.name} <small style="float: right;">${msg.timestamp}</small></h4>
-                        <p>${msg.message}</p>
-                    </div>
-                `).join('');
+                chatMessages.innerHTML = messages.map(msg => {
+                    const username = msg.username || msg.name; // Support both old and new format
+                    const time = msg.displayTime || msg.timestamp;
+                    return `
+                        <div class="feedback-item">
+                            <h4>${username} <small style="float: right;">${time}</small></h4>
+                            <p>${msg.message}</p>
+                        </div>
+                    `;
+                }).join('');
                 
                 // Auto-scroll to bottom
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             });
-        };
+        }
+
+        window.loadChat = loadChat;
     </script>
 
     <script>
