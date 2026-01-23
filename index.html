@@ -659,7 +659,7 @@
         <p>© 2026 Kiddinclass - Your Gaming Hub</p>
     </footer>
 
-    <!-- Cat Mascot -->
+    <!-- Cat Mascot - OUTSIDE modal so it can animate independently -->
     <div class="cat-mascot" onclick="openModal()">
         <img src="images/cat-mascot.png" alt="Helper Cat">
     </div>
@@ -1197,19 +1197,29 @@
         });
 
         // Modal Functions
-        function openModal() {
+        window.openModal = function() {
             const modal = document.getElementById('modal');
             const cat = document.querySelector('.cat-mascot');
+            
+            if (!cat || !modal) {
+                console.error('Cat or modal element not found');
+                return;
+            }
             
             modal.classList.add('active');
             setTimeout(() => {
                 cat.classList.add('moving');
             }, 10);
-        }
+        };
 
-        function closeModal() {
+        window.closeModal = function() {
             const modal = document.getElementById('modal');
             const cat = document.querySelector('.cat-mascot');
+            
+            if (!cat || !modal) {
+                console.error('Cat or modal element not found');
+                return;
+            }
             
             console.log('Closing modal, removing moving class');
             console.log('Cat before:', cat.classList);
@@ -1224,9 +1234,9 @@
                 modal.classList.remove('active');
                 console.log('Modal closed');
             }, 600);
-        }
+        };
 
-        function switchTab(tabName) {
+        window.switchTab = function(tabName) {
             // Remove active class from all tabs
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -1240,7 +1250,7 @@
             } else if (tabName === 'chat') {
                 loadChat();
             }
-        }
+        };
 
         // Feedback System with Firebase
         function submitFeedback(event) {
