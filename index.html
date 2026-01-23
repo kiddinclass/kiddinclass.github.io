@@ -41,6 +41,7 @@
             justify-content: space-between;
             align-items: center;
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         .logo {
@@ -141,6 +142,37 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        .tab-cloak {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .account-btn {
+            padding: 8px 16px;
+            background: #4ade80;
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .account-btn:hover {
+            background: #22c55e;
+        }
+
+        .account-btn.logged-in {
+            background: #2a2a2a;
+            color: #4ade80;
+            border: 2px solid #4ade80;
         }
 
         .search-bar {
@@ -629,6 +661,7 @@
                 </div>
                 <div class="now-playing" id="nowPlaying">No music playing</div>
             </div>
+            <button class="account-btn" id="accountBtn" onclick="openAccountModal()">👤 Login</button>
             <div class="tab-cloak">
                 <button class="cloak-btn" onclick="cloakTab('ixl')">IXL</button>
                 <button class="cloak-btn" onclick="cloakTab('gimkit')">Gimkit</button>
@@ -676,7 +709,6 @@
                 <button class="tab-btn active" onclick="switchTab('updates')">Updates</button>
                 <button class="tab-btn" onclick="switchTab('feedback')">Feedback</button>
                 <button class="tab-btn" onclick="switchTab('chat')">Chat Room</button>
-                <button class="tab-btn" onclick="switchTab('account')">Account</button>
             </div>
 
             <!-- Updates Tab -->
@@ -748,6 +780,12 @@
     </script>
 
     <script type="module">
+        // Expose functions immediately to prevent "not defined" errors
+        window.openAccountModal = window.openAccountModal || function() {};
+        window.closeAccountModal = window.closeAccountModal || function() {};
+        window.showRegister = window.showRegister || function() {};
+        window.showLogin = window.showLogin || function() {};
+        
         // Import Firebase
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getDatabase, ref, push, onValue, query, limitToLast, get, set } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
@@ -783,10 +821,15 @@
         function updateLoginUI() {
             const loginStatus = document.getElementById('chatLoginStatus');
             const chatForm = document.getElementById('chatForm');
+            const accountBtn = document.getElementById('accountBtn');
             
             if (currentUser) {
                 loginStatus.innerHTML = `<span style="color: #4ade80;">✓ Logged in as: <strong>${currentUser.username}</strong></span>`;
                 chatForm.style.display = 'flex';
+                
+                // Update header button
+                accountBtn.innerHTML = `👤 ${currentUser.username}`;
+                accountBtn.classList.add('logged-in');
                 
                 // Update account section
                 document.getElementById('currentUsername').textContent = currentUser.username;
@@ -797,12 +840,24 @@
                 loginStatus.innerHTML = `<span style="color: #888;">Please login to chat</span>`;
                 chatForm.style.display = 'none';
                 
+                // Update header button
+                accountBtn.innerHTML = '👤 Login';
+                accountBtn.classList.remove('logged-in');
+                
                 // Update account section
                 document.getElementById('loginSection').style.display = 'block';
                 document.getElementById('registerSection').style.display = 'none';
                 document.getElementById('accountSection').style.display = 'none';
             }
         }
+
+        window.openAccountModal = function() {
+            document.getElementById('accountModal').classList.add('active');
+        };
+
+        window.closeAccountModal = function() {
+            document.getElementById('accountModal').classList.remove('active');
+        };
 
         // Simple hash function (for demo - in production use proper encryption)
         function simpleHash(str) {
@@ -858,8 +913,8 @@
                 updateLoginUI();
                 alert('Account created successfully! 🎉');
                 
-                // Switch to account tab
-                switchTab('account');
+                // Close account modal
+                closeAccountModal();
             } catch (error) {
                 console.error('Registration error:', error);
                 alert('Failed to create account. Please try again.');
@@ -895,7 +950,9 @@
                 updateLoginUI();
                 alert('Login successful! 🎉');
                 
-                // Switch to chat tab
+                // Close account modal and open community hub chat
+                closeAccountModal();
+                openModal();
                 switchTab('chat');
             } catch (error) {
                 console.error('Login error:', error);
@@ -1377,9 +1434,24 @@
         }
 
         // Close modal when clicking outside
-        document.getElementById('modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
+        window.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('modal');
+            const accountModal = document.getElementById('accountModal');
+            
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeModal();
+                    }
+                });
+            }
+            
+            if (accountModal) {
+                accountModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeAccountModal();
+                    }
+                });
             }
         });
 
