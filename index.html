@@ -780,12 +780,6 @@
     </script>
 
     <script type="module">
-        // Expose functions immediately to prevent "not defined" errors
-        window.openAccountModal = window.openAccountModal || function() {};
-        window.closeAccountModal = window.closeAccountModal || function() {};
-        window.showRegister = window.showRegister || function() {};
-        window.showLogin = window.showLogin || function() {};
-        
         // Import Firebase
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
         import { getDatabase, ref, push, onValue, query, limitToLast, get, set } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
