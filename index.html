@@ -686,7 +686,7 @@
                 <div class="now-playing" id="nowPlaying">No music playing</div>
             </div>
             <div class="account-container">
-                <button class="account-btn" id="accountBtn" onclick="toggleAccountDropdown()">👤 Login</button>
+                <button class="account-btn" id="accountBtn">👤 Login</button>
                 <div class="account-dropdown" id="accountDropdown">
                     <!-- Login Section -->
                     <div id="loginSection">
@@ -1046,6 +1046,14 @@
 
         // Check login on page load
         checkLogin();
+
+        // Setup account button click handler
+        const accountBtn = document.getElementById('accountBtn');
+        if (accountBtn) {
+            accountBtn.addEventListener('click', function() {
+                toggleAccountDropdown();
+            });
+        }
 
         // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
