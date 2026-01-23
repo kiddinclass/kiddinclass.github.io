@@ -917,7 +917,10 @@
             const savedUser = localStorage.getItem('kiddinclass_user');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
-                updateLoginUI();
+                // Only update UI if DOM is ready
+                if (document.getElementById('accountBtn')) {
+                    updateLoginUI();
+                }
             }
         }
 
