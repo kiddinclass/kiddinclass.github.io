@@ -1762,7 +1762,7 @@
             }
             
             const chatMsg = {
-                username: currentUser.username, // Changed from 'name' to 'username'
+                username: currentUser.username,
                 message: message,
                 timestamp: new Date().toISOString(),
                 displayTime: new Date().toLocaleTimeString()
@@ -1778,11 +1778,16 @@
                 .then(async () => {
                     console.log('Message sent successfully!');
                     
-                    // Update user's message count
-                    const userRef = ref(database, `users/${currentUser.username.toLowerCase()}/messageCount`);
-                    const snapshot = await get(userRef);
-                    const currentCount = snapshot.exists() ? snapshot.val() : 0;
-                    await set(userRef, currentCount + 1);
+                    // Try to update user's message count (ignore errors)
+                    try {
+                        const userRef = ref(database, `users/${currentUser.username.toLowerCase()}/messageCount`);
+                        const snapshot = await get(userRef);
+                        const currentCount = snapshot.exists() ? snapshot.val() : 0;
+                        await set(userRef, currentCount + 1);
+                    } catch (error) {
+                        // Silently ignore permission errors for message count
+                        console.log('Could not update message count (non-critical):', error.code);
+                    }
                     
                     // Clear message input
                     document.getElementById('chatMessage').value = '';
